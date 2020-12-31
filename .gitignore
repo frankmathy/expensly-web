@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# Secret properties
+/src/firebaseProperties.js
+
 # testing
 /coverage
 
