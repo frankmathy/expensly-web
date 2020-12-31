@@ -6,7 +6,7 @@ import 'firebase/firestore';
 import 'firebase/auth';
 
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollectionData } from 'react-firebase-hooks';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 firebase.initializeApp({
   apiKey: 'AIzaSyCfiKBzRZO_wlDXnQTZaXTFiKAMAayofe0',
@@ -18,11 +18,60 @@ firebase.initializeApp({
   measurementId: 'G-57C5XJ3XLT'
 });
 
+const auth = firebase.auth();
+const firestore = firebase.firestore();
+
 function App() {
+  const [user] = useAuthState(auth);
   return (
     <div className="App">
-      <header className="App-header"></header>
+      <header>
+        <h1>Expensly</h1>
+        <SignOut />
+      </header>
+      <section>{user ? <ExpenslyApp /> : <SignIn />}</section>
     </div>
+  );
+}
+
+function ExpenslyApp() {
+  const expensesRef = firestore.collection('expenses');
+  const query = expensesRef.orderBy('createdAt').limit(50);
+  const [expenses] = useCollectionData(query, { idField: 'id' });
+
+  return (
+    <>
+      <div>
+        {expenses &&
+          expenses.map(expense => (
+            <ExpenseLine key={expense.id} expense={expense} />
+          ))}
+      </div>
+    </>
+  );
+}
+
+function ExpenseLine(props) {
+  const { amount, createdAt, category, budget, description } = props.expense;
+  return (
+    <p>
+      {createdAt}: {description} €{amount} {category})
+    </p>
+  );
+}
+
+function SignIn() {
+  const signInWithGoogle = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+  };
+
+  return <button onClick={signInWithGoogle}>Sign in with Google</button>;
+}
+
+function SignOut() {
+  return (
+    auth.currentUser && <button onClick={() => auth.signOut()}>Sign Out</button>
   );
 }
 
