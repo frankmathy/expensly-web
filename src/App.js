@@ -1,32 +1,34 @@
-import React, { useState } from 'react';
-import './App.css';
-import firebaseProperties from './firebaseProperties';
+import React, { useState } from "react";
+import "./App.css";
+import firebaseProperties from "./firebaseProperties";
 
-import Button from '@material-ui/core/Button';
+import Button from "@material-ui/core/Button";
 
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
+import firebase from "firebase/app";
+import "firebase/firestore";
+import "firebase/auth";
 
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import Container from '@material-ui/core/Container';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import Typography from '@material-ui/core/Typography';
+import { makeStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
+import Container from "@material-ui/core/Container";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import Typography from "@material-ui/core/Typography";
 
-import AddExpenseForm from './components/AddExpenseForm';
+import AddExpenseForm from "./components/AddExpenseForm";
+
+import { formatAmount, formatDateTime } from "./util/formatHelper";
 
 firebase.initializeApp(firebaseProperties);
 
@@ -57,16 +59,16 @@ function App() {
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 650
-  }
+    minWidth: 650,
+  },
 });
 
 function ExpenslyApp() {
   const classes = useStyles();
 
-  const expensesRef = firestore.collection('expenses');
-  const query = expensesRef.orderBy('createdAt').limit(50);
-  const [expenses] = useCollectionData(query, { idField: 'id' });
+  const expensesRef = firestore.collection("expenses");
+  const query = expensesRef.orderBy("createdAt").limit(50);
+  const [expenses] = useCollectionData(query, { idField: "id" });
 
   const addExpense = async (amount, category, budget, description) => {
     const { uid } = auth.currentUser;
@@ -76,7 +78,7 @@ function ExpenslyApp() {
       amount,
       category,
       budget,
-      description
+      description,
     });
   };
 
@@ -95,22 +97,15 @@ function ExpenslyApp() {
           </TableHead>
           <TableBody>
             {expenses &&
-              expenses.map(expense => (
+              expenses.map((expense) => (
                 <TableRow key={expense.id}>
                   <TableCell>
                     {expense.createdAt
-                      ? `${expense.createdAt
-                          .toDate()
-                          .toLocaleDateString()} ${expense.createdAt
-                          .toDate()
-                          .toLocaleTimeString()}`
-                      : ''}
+                      ? formatDateTime(expense.createdAt.toDate())
+                      : ""}
                   </TableCell>
                   <TableCell align="right">
-                    {new Intl.NumberFormat('de-DE', {
-                      style: 'currency',
-                      currency: 'EUR'
-                    }).format(expense.amount)}
+                    {formatAmount(expense.amount)}
                   </TableCell>
                   <TableCell align="left">{expense.category}</TableCell>
                   <TableCell align="left">{expense.budget}</TableCell>
