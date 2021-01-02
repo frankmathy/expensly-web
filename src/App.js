@@ -38,19 +38,20 @@ function App() {
   const [user] = useAuthState(auth);
   return (
     <Container maxWidth="md">
-      <header>
-        <AppBar>
-          <Toolbar>
-            <IconButton>
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6">Expensly</Typography>
-            {user && <SignOut />}
-          </Toolbar>
-        </AppBar>
-      </header>
-      <section></section>
-      {user ? <ExpenslyApp /> : <SignIn />}
+      <div className="App">
+        <header>
+          <AppBar>
+            <Toolbar>
+              <IconButton>
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6">Expensly</Typography>
+              {user && <SignOut />}
+            </Toolbar>
+          </AppBar>
+        </header>
+        <section>{user ? <ExpenslyApp /> : <SignIn />}</section>
+      </div>
     </Container>
   );
 }
