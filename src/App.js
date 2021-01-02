@@ -19,6 +19,13 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Container from '@material-ui/core/Container';
+import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import Typography from '@material-ui/core/Typography';
 
 firebase.initializeApp(firebaseProperties);
 
@@ -28,13 +35,25 @@ const firestore = firebase.firestore();
 function App() {
   const [user] = useAuthState(auth);
   return (
-    <div className="App">
+    <Container maxWidth="md">
       <header>
+        <AppBar>
+          <Toolbar>
+            <IconButton>
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6">Expensly</Typography>
+            {user ? <SignOut /> : <SignIn />}
+          </Toolbar>
+        </AppBar>
         <h1>Expensly</h1>
-        <SignOut />
       </header>
-      <section>{user ? <ExpenslyApp /> : <SignIn />}</section>
-    </div>
+      {user && (
+        <section>
+          <ExpenslyApp />
+        </section>
+      )}
+    </Container>
   );
 }
 
@@ -97,7 +116,12 @@ function ExpenslyApp() {
                           .toLocaleTimeString()}`
                       : ''}
                   </TableCell>
-                  <TableCell align="right">{expense.amount}</TableCell>
+                  <TableCell align="right">
+                    {new Intl.NumberFormat('de-DE', {
+                      style: 'currency',
+                      currency: 'EUR'
+                    }).format(expense.amount)}
+                  </TableCell>
                   <TableCell align="left">{expense.category}</TableCell>
                   <TableCell align="left">{expense.budget}</TableCell>
                   <TableCell align="left">{expense.description}</TableCell>
@@ -161,24 +185,12 @@ function SignIn() {
     auth.signInWithPopup(provider);
   };
 
-  return (
-    <Button variant="contained" color="primary" onClick={signInWithGoogle}>
-      Sign in with Google
-    </Button>
-  );
+  return <Button onClick={signInWithGoogle}>Sign In</Button>;
 }
 
 function SignOut() {
   return (
-    auth.currentUser && (
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => auth.signOut()}
-      >
-        Sign Out
-      </Button>
-    )
+    auth.currentUser && <Button onClick={() => auth.signOut()}>Sign Out</Button>
   );
 }
 
