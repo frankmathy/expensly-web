@@ -48,7 +48,6 @@ function App() {
             {user && <SignOut />}
           </Toolbar>
         </AppBar>
-        <h1>Expensly</h1>
       </header>
       <section></section>
       {user ? <ExpenslyApp /> : <SignIn />}
