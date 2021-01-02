@@ -2,12 +2,23 @@ import React, { useState } from 'react';
 import './App.css';
 import firebaseProperties from './firebaseProperties';
 
+import Button from '@material-ui/core/Button';
+
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
+
+import { makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
 
 firebase.initializeApp(firebaseProperties);
 
@@ -27,7 +38,15 @@ function App() {
   );
 }
 
+const useStyles = makeStyles({
+  table: {
+    minWidth: 650
+  }
+});
+
 function ExpenslyApp() {
+  const classes = useStyles();
+
   const expensesRef = firestore.collection('expenses');
   const query = expensesRef.orderBy('createdAt').limit(50);
   const [expenses] = useCollectionData(query, { idField: 'id' });
@@ -54,12 +73,39 @@ function ExpenslyApp() {
 
   return (
     <>
-      <div>
-        {expenses &&
-          expenses.map(expense => (
-            <ExpenseLine key={expense.id} expense={expense} />
-          ))}
-      </div>
+      <TableContainer component={Paper}>
+        <Table className={classes.table} aria-label="Expenses">
+          <TableHead>
+            <TableRow>
+              <TableCell>Date</TableCell>
+              <TableCell align="right">Amount</TableCell>
+              <TableCell align="left">Category</TableCell>
+              <TableCell align="left">Budget</TableCell>
+              <TableCell align="left">Description</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {expenses &&
+              expenses.map(expense => (
+                <TableRow key={expense.id}>
+                  <TableCell>
+                    {expense.createdAt
+                      ? `${expense.createdAt
+                          .toDate()
+                          .toLocaleDateString()} ${expense.createdAt
+                          .toDate()
+                          .toLocaleTimeString()}`
+                      : ''}
+                  </TableCell>
+                  <TableCell align="right">{expense.amount}</TableCell>
+                  <TableCell align="left">{expense.category}</TableCell>
+                  <TableCell align="left">{expense.budget}</TableCell>
+                  <TableCell align="left">{expense.description}</TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <form onSubmit={addExpense}>
         <p>
@@ -109,28 +155,30 @@ function ExpenslyApp() {
   );
 }
 
-function ExpenseLine(props) {
-  const { amount, createdAt, category, budget, description } = props.expense;
-  return (
-    <p>
-      {createdAt.toDate().toString()}: {description} for €{amount} {category}-
-      {budget}
-    </p>
-  );
-}
-
 function SignIn() {
   const signInWithGoogle = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider);
   };
 
-  return <button onClick={signInWithGoogle}>Sign in with Google</button>;
+  return (
+    <Button variant="contained" color="primary" onClick={signInWithGoogle}>
+      Sign in with Google
+    </Button>
+  );
 }
 
 function SignOut() {
   return (
-    auth.currentUser && <button onClick={() => auth.signOut()}>Sign Out</button>
+    auth.currentUser && (
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => auth.signOut()}
+      >
+        Sign Out
+      </Button>
+    )
   );
 }
 
