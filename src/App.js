@@ -70,26 +70,6 @@ function ExpenslyApp() {
   const query = expensesRef.orderBy('createdAt').limit(50);
   const [expenses] = useCollectionData(query, { idField: 'id' });
 
-  const [amount, setAmount] = useState(0.0);
-  const [category, setCategory] = useState('Food');
-  const [budget, setBudget] = useState('Household');
-  const [description, setDescription] = useState('');
-
-  const addExpense = async e => {
-    e.preventDefault();
-
-    const { uid } = auth.currentUser;
-
-    await expensesRef.add({
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      uid,
-      amount,
-      category,
-      budget,
-      description
-    });
-  };
-
   return (
     <>
       <TableContainer component={Paper}>
@@ -131,50 +111,7 @@ function ExpenslyApp() {
         </Table>
       </TableContainer>
 
-      <form onSubmit={addExpense}>
-        <p>
-          <label>
-            Amount:
-            <input
-              value={amount}
-              pattern="[0-9]*"
-              onChange={e => {
-                try {
-                  const amount = parseFloat(e.target.value);
-                  if (!isNaN(amount)) {
-                    setAmount(amount);
-                  }
-                } catch (err) {}
-              }}
-            />
-          </label>
-        </p>
-        <p>
-          <label>
-            Category:
-            <input
-              value={category}
-              onChange={e => setCategory(e.target.value)}
-            />
-          </label>
-        </p>
-        <p>
-          <label>
-            Budget:
-            <input value={budget} onChange={e => setBudget(e.target.value)} />
-          </label>
-        </p>
-        <p>
-          <label>
-            Description:
-            <input
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-            />
-          </label>
-        </p>
-        <button type="submit">Add Expense</button>
-      </form>
+      <AddExpenseForm expensesRef={expensesRef} />
     </>
   );
 }
@@ -191,6 +128,76 @@ function SignIn() {
 function SignOut() {
   return (
     auth.currentUser && <Button onClick={() => auth.signOut()}>Sign Out</Button>
+  );
+}
+
+function AddExpenseForm(props) {
+  const [amount, setAmount] = useState(0.0);
+  const [category, setCategory] = useState('Food');
+  const [budget, setBudget] = useState('Household');
+  const [description, setDescription] = useState('');
+
+  const { expensesRef } = props;
+
+  const addExpense = async e => {
+    e.preventDefault();
+
+    const { uid } = auth.currentUser;
+
+    await expensesRef.add({
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      uid,
+      amount,
+      category,
+      budget,
+      description
+    });
+  };
+
+  return (
+    <form onSubmit={addExpense}>
+      <p>
+        <label>
+          Amount:
+          <input
+            value={amount}
+            pattern="[0-9]*"
+            onChange={e => {
+              try {
+                const amount = parseFloat(e.target.value);
+                if (!isNaN(amount)) {
+                  setAmount(amount);
+                }
+              } catch (err) {}
+            }}
+          />
+        </label>
+      </p>
+      <p>
+        <label>
+          Category:
+          <input value={category} onChange={e => setCategory(e.target.value)} />
+        </label>
+      </p>
+      <p>
+        <label>
+          Budget:
+          <input value={budget} onChange={e => setBudget(e.target.value)} />
+        </label>
+      </p>
+      <p>
+        <label>
+          Description:
+          <input
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+          />
+        </label>
+      </p>
+      <Button variant="contained" color="primary" type="submit">
+        Add Expense
+      </Button>
+    </form>
   );
 }
 
