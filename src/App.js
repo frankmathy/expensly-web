@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import "./App.css";
 import firebaseProperties from "./firebaseProperties";
 
-import Button from "@material-ui/core/Button";
-
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
@@ -11,7 +9,9 @@ import "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 
+import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -26,7 +26,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Typography from "@material-ui/core/Typography";
 
-import AddExpenseForm from "./components/AddExpenseForm";
+import ExpenseDialog from "./components/ExpenseDialog";
 
 import { formatAmount, formatDateTime } from "./util/formatHelper";
 
@@ -37,8 +37,10 @@ const firestore = firebase.firestore();
 
 function App() {
   const [user] = useAuthState(auth);
+
   return (
     <Container maxWidth="md">
+      <CssBaseline />
       <div className="App">
         <header>
           <AppBar>
@@ -63,12 +65,13 @@ const useStyles = makeStyles({
   },
 });
 
-function ExpenslyApp() {
+function ExpenslyApp(props) {
   const classes = useStyles();
 
   const expensesRef = firestore.collection("expenses");
   const query = expensesRef.orderBy("createdAt").limit(50);
   const [expenses] = useCollectionData(query, { idField: "id" });
+  const [expenseDialogVisible, setExpenseDialogVisible] = useState(false);
 
   const addExpense = async (amount, category, budget, description) => {
     const { uid } = auth.currentUser;
@@ -84,6 +87,13 @@ function ExpenslyApp() {
 
   return (
     <>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={(e) => setExpenseDialogVisible(true)}
+      >
+        Add Expense
+      </Button>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="Expenses">
           <TableHead>
@@ -116,7 +126,11 @@ function ExpenslyApp() {
         </Table>
       </TableContainer>
 
-      <AddExpenseForm addExpense={addExpense} />
+      <ExpenseDialog
+        addExpense={addExpense}
+        open={expenseDialogVisible}
+        onClose={() => setExpenseDialogVisible(false)}
+      />
     </>
   );
 }
