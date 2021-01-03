@@ -1,34 +1,34 @@
-import React, { useState } from "react";
-import "./App.css";
-import firebaseProperties from "./firebaseProperties";
+import React, { useState } from 'react';
+import './App.css';
+import firebaseProperties from './firebaseProperties';
 
-import firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/auth";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/auth';
 
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 
-import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import Container from "@material-ui/core/Container";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import Typography from "@material-ui/core/Typography";
+import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import Container from '@material-ui/core/Container';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import Typography from '@material-ui/core/Typography';
 
-import ExpenseDialog from "./components/ExpenseDialog";
+import ExpenseDialog from './components/ExpenseDialog';
 
-import { formatAmount, formatDateTime } from "./util/formatHelper";
+import { formatAmount, formatDateTime } from './util/formatHelper';
 
 firebase.initializeApp(firebaseProperties);
 
@@ -61,16 +61,16 @@ function App() {
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 650,
-  },
+    minWidth: 650
+  }
 });
 
 function ExpenslyApp(props) {
   const classes = useStyles();
 
-  const expensesRef = firestore.collection("expenses");
-  const query = expensesRef.orderBy("createdAt").limit(50);
-  const [expenses] = useCollectionData(query, { idField: "id" });
+  const expensesRef = firestore.collection('expenses');
+  const query = expensesRef.orderBy('createdAt').limit(50);
+  const [expenses] = useCollectionData(query, { idField: 'id' });
   const [expenseDialogVisible, setExpenseDialogVisible] = useState(false);
   const [editedExpense, setEditedExpense] = useState(null);
 
@@ -82,11 +82,19 @@ function ExpenslyApp(props) {
       amount,
       category,
       budget,
-      description,
+      description
     });
   };
 
-  const showExpenseDialog = (editedExpense) => {
+  const updateExpense = async expense => {
+    await expensesRef.doc(expense.id).update(expense);
+  };
+
+  const deleteExpense = async expense => {
+    await expensesRef.doc(expense.id).delete();
+  };
+
+  const showExpenseDialog = editedExpense => {
     setEditedExpense(editedExpense);
     setExpenseDialogVisible(true);
   };
@@ -96,7 +104,7 @@ function ExpenslyApp(props) {
       <Button
         variant="contained"
         color="primary"
-        onClick={(e) => showExpenseDialog(null)}
+        onClick={e => showExpenseDialog(null)}
       >
         Add Expense
       </Button>
@@ -113,7 +121,7 @@ function ExpenslyApp(props) {
           </TableHead>
           <TableBody>
             {expenses &&
-              expenses.map((expense) => (
+              expenses.map(expense => (
                 <TableRow
                   key={expense.id}
                   onClick={() => showExpenseDialog(expense)}
@@ -121,7 +129,7 @@ function ExpenslyApp(props) {
                   <TableCell>
                     {expense.createdAt
                       ? formatDateTime(expense.createdAt.toDate())
-                      : ""}
+                      : ''}
                   </TableCell>
                   <TableCell align="right">
                     {formatAmount(expense.amount)}
@@ -137,6 +145,8 @@ function ExpenslyApp(props) {
 
       <ExpenseDialog
         addExpense={addExpense}
+        updateExpense={updateExpense}
+        deleteExpense={deleteExpense}
         expense={editedExpense}
         open={expenseDialogVisible}
         onClose={() => setExpenseDialogVisible(false)}
