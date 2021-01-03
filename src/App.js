@@ -25,6 +25,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Typography from '@material-ui/core/Typography';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
 
 import ExpenseDialog from './components/ExpenseDialog';
 
@@ -39,23 +41,25 @@ function App() {
   const [user] = useAuthState(auth);
 
   return (
-    <Container maxWidth="md">
-      <CssBaseline />
-      <div className="App">
-        <header>
-          <AppBar>
-            <Toolbar>
-              <IconButton>
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6">Expensly</Typography>
-              {user && <SignOut />}
-            </Toolbar>
-          </AppBar>
-        </header>
-        <section>{user ? <ExpenslyApp /> : <SignIn />}</section>
-      </div>
-    </Container>
+    <MuiPickersUtilsProvider utils={MomentUtils}>
+      <Container maxWidth="md">
+        <CssBaseline />
+        <div className="App">
+          <header>
+            <AppBar>
+              <Toolbar>
+                <IconButton>
+                  <MenuIcon />
+                </IconButton>
+                <Typography variant="h6">Expensly</Typography>
+                {user && <SignOut />}
+              </Toolbar>
+            </AppBar>
+          </header>
+          <section>{user ? <ExpenslyApp /> : <SignIn />}</section>
+        </div>
+      </Container>
+    </MuiPickersUtilsProvider>
   );
 }
 
@@ -69,15 +73,22 @@ function ExpenslyApp(props) {
   const classes = useStyles();
 
   const expensesRef = firestore.collection('expenses');
-  const query = expensesRef.orderBy('createdAt').limit(50);
+  const query = expensesRef.orderBy('expenseDate', 'desc');
   const [expenses] = useCollectionData(query, { idField: 'id' });
   const [expenseDialogVisible, setExpenseDialogVisible] = useState(false);
   const [editedExpense, setEditedExpense] = useState(null);
 
-  const addExpense = async (amount, category, budget, description) => {
+  const addExpense = async (
+    expenseDate,
+    amount,
+    category,
+    budget,
+    description
+  ) => {
     const { uid } = auth.currentUser;
     await expensesRef.add({
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      expenseDate,
       uid,
       amount,
       category,
@@ -127,8 +138,8 @@ function ExpenslyApp(props) {
                   onClick={() => showExpenseDialog(expense)}
                 >
                   <TableCell>
-                    {expense.createdAt
-                      ? formatDateTime(expense.createdAt.toDate())
+                    {expense.expenseDate
+                      ? formatDateTime(expense.expenseDate)
                       : ''}
                   </TableCell>
                   <TableCell align="right">

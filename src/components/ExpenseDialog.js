@@ -9,11 +9,13 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import { parseAmount } from '../util/formatHelper';
+import { parseAmount, makeDate } from '../util/formatHelper';
 import { categories, budgets } from '../model/defaults';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import { DialogContent, DialogActions } from '@material-ui/core';
+import { DateTimePicker } from '@material-ui/pickers';
+import * as moment from 'moment';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -33,6 +35,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ExpenseDialog(props) {
+  const [expenseDate, setExpenseDate] = useState(moment(new Date()));
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(categories[0]);
   const [budget, setBudget] = useState(budgets[0]);
@@ -53,12 +56,19 @@ function ExpenseDialog(props) {
   const saveAndClose = async e => {
     const amountValue = parseAmount(amount);
     if (!expense) {
-      addExpense(amountValue, category, budget, description);
+      addExpense(
+        makeDate(expenseDate),
+        amountValue,
+        category,
+        budget,
+        description
+      );
     } else {
       expense.amount = amountValue;
       expense.category = category;
       expense.budget = budget;
       expense.description = description;
+      expense.expenseDate = makeDate(expenseDate);
       updateExpense(expense);
     }
     setAmount(0.0);
@@ -79,6 +89,7 @@ function ExpenseDialog(props) {
     setBudget(expense ? expense.budget : budgets[0]);
     setDescription(expense ? expense.description : '');
     setSaveButtonText(expense ? 'Update' : 'Add');
+    setExpenseDate(expense ? expense.expenseDate.toDate() : new Date());
     setTitle(expense ? 'Edit Expense' : 'Add Expense');
   }, [expense]);
 
@@ -87,6 +98,16 @@ function ExpenseDialog(props) {
       <DialogTitle id="simple-dialog-title">{title}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <DateTimePicker
+              autoOk
+              label="Expense Date"
+              ampm={false}
+              disableFuture
+              value={expenseDate}
+              onChange={setExpenseDate}
+            />
+          </Grid>
           <Grid item xs={12} sm={6}>
             <CurrencyTextField
               value={amount}
