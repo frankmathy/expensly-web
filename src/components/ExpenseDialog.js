@@ -58,11 +58,7 @@ function ExpenseDialog(props) {
   };
 
   return (
-    <Dialog
-      onClose={handleClose}
-      aria-labelledby="simple-dialog-title"
-      open={open}
-    >
+    <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open}>
       <DialogTitle id="simple-dialog-title">Add Expense</DialogTitle>
       <form className={classes.form} noValidate onSubmit={addExpenseLocal}>
         <Grid container spacing={2}>
