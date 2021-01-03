@@ -72,6 +72,7 @@ function ExpenslyApp(props) {
   const query = expensesRef.orderBy("createdAt").limit(50);
   const [expenses] = useCollectionData(query, { idField: "id" });
   const [expenseDialogVisible, setExpenseDialogVisible] = useState(false);
+  const [editedExpense, setEditedExpense] = useState(null);
 
   const addExpense = async (amount, category, budget, description) => {
     const { uid } = auth.currentUser;
@@ -85,12 +86,17 @@ function ExpenslyApp(props) {
     });
   };
 
+  const showExpenseDialog = (editedExpense) => {
+    setEditedExpense(editedExpense);
+    setExpenseDialogVisible(true);
+  };
+
   return (
     <>
       <Button
         variant="contained"
         color="primary"
-        onClick={(e) => setExpenseDialogVisible(true)}
+        onClick={(e) => showExpenseDialog(null)}
       >
         Add Expense
       </Button>
@@ -108,7 +114,10 @@ function ExpenslyApp(props) {
           <TableBody>
             {expenses &&
               expenses.map((expense) => (
-                <TableRow key={expense.id}>
+                <TableRow
+                  key={expense.id}
+                  onClick={() => showExpenseDialog(expense)}
+                >
                   <TableCell>
                     {expense.createdAt
                       ? formatDateTime(expense.createdAt.toDate())
@@ -128,6 +137,7 @@ function ExpenslyApp(props) {
 
       <ExpenseDialog
         addExpense={addExpense}
+        expense={editedExpense}
         open={expenseDialogVisible}
         onClose={() => setExpenseDialogVisible(false)}
       />

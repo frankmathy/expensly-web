@@ -1,13 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import List from "@material-ui/core/List";
-import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
 import CurrencyTextField from "@unicef/material-ui-currency-textfield";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -36,11 +32,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ExpenseDialog(props) {
-  const [amount, setAmount] = useState(0.0);
+  const [amount, setAmount] = useState("");
   const [category, setCategory] = useState(categories[0]);
   const [budget, setBudget] = useState(budgets[0]);
   const [description, setDescription] = useState("");
-  const { onClose, addExpense, open } = props;
+  const { onClose, addExpense, open, expense } = props;
 
   const classes = useStyles();
 
@@ -52,6 +48,13 @@ function ExpenseDialog(props) {
     setDescription("");
     onClose();
   };
+
+  useEffect(() => {
+    setAmount(expense ? expense.amount : 0.0);
+    setCategory(expense ? expense.category : categories[0]);
+    setBudget(expense ? expense.budget : budgets[0]);
+    setDescription(expense ? expense.description : "");
+  }, [expense]);
 
   const handleClose = () => {
     onClose();
