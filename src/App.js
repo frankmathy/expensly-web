@@ -29,6 +29,8 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 
 import ExpenseDialog from './components/ExpenseDialog';
+import LoginButton from './components/LoginButton';
+import LogoutButton from './components/LogoutButton';
 
 import { formatAmount, formatDateTime } from './util/formatHelper';
 
@@ -52,11 +54,11 @@ function App() {
                   <MenuIcon />
                 </IconButton>
                 <Typography variant="h6">Expensly</Typography>
-                {user && <SignOut />}
+                {user && <LogoutButton />}
               </Toolbar>
             </AppBar>
           </header>
-          <section>{user ? <ExpenslyApp /> : <SignIn />}</section>
+          <section>{user ? <ExpenslyApp /> : <LoginButton />}</section>
         </div>
       </Container>
     </MuiPickersUtilsProvider>
@@ -163,25 +165,6 @@ function ExpenslyApp(props) {
         onClose={() => setExpenseDialogVisible(false)}
       />
     </>
-  );
-}
-
-function SignIn() {
-  const signInWithGoogle = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider);
-  };
-
-  return (
-    <Button variant="contained" color="primary" onClick={signInWithGoogle}>
-      Sign In with Google
-    </Button>
-  );
-}
-
-function SignOut() {
-  return (
-    auth.currentUser && <Button onClick={() => auth.signOut()}>Sign Out</Button>
   );
 }
 
