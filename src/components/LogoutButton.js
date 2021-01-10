@@ -9,7 +9,11 @@ function LogoutButton() {
   const auth = firebase.auth();
 
   return (
-    auth.currentUser && <Button onClick={() => auth.signOut()}>Sign Out</Button>
+    auth.currentUser && (
+      <Button color="inherit" onClick={() => auth.signOut()}>
+        Sign Out
+      </Button>
+    )
   );
 }
 

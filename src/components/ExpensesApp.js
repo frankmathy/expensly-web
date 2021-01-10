@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
 
 import Button from '@material-ui/core/Button';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
+import Header from './Header';
 
 import firebase from 'firebase/app';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 import ExpenseTable from './ExpenseTable';
 import ExpenseDialog from './ExpenseDialog';
-import LogoutButton from './LogoutButton';
 
 function ExpensesApp(props) {
   const { user, firestore } = props;
@@ -55,19 +51,11 @@ function ExpensesApp(props) {
   };
 
   return (
-    <>
-      <header>
-        <AppBar>
-          <Toolbar>
-            <IconButton>
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6">Expensly</Typography>
-            {user && <LogoutButton />}
-          </Toolbar>
-        </AppBar>
-      </header>
-      <section>
+    <Grid container direction="column" spacing="2">
+      <Grid item>
+        <Header user={user} />
+      </Grid>
+      <Grid item>
         <Button
           variant="contained"
           color="primary"
@@ -75,7 +63,8 @@ function ExpensesApp(props) {
         >
           Add Expense
         </Button>
-
+      </Grid>
+      <Grid item>
         <ExpenseTable
           expenses={expenses}
           showExpenseDialog={showExpenseDialog}
@@ -89,8 +78,8 @@ function ExpensesApp(props) {
           open={expenseDialogVisible}
           onClose={() => setExpenseDialogVisible(false)}
         />
-      </section>
-    </>
+      </Grid>
+    </Grid>
   );
 }
 
