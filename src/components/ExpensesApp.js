@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Header from './Header';
 
@@ -53,16 +52,7 @@ function ExpensesApp(props) {
   return (
     <Grid container direction="column" spacing="2">
       <Grid item>
-        <Header user={user} />
-      </Grid>
-      <Grid item>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={e => showExpenseDialog(null)}
-        >
-          Add Expense
-        </Button>
+        <Header user={user} showExpenseDialog={showExpenseDialog} />
       </Grid>
       <Grid item>
         <ExpenseTable

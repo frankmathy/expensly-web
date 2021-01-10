@@ -1,6 +1,7 @@
 import React from 'react';
 
 import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -23,7 +24,7 @@ const useStyles = makeStyles(theme => ({
 
 function Header(props) {
   const classes = useStyles();
-  const { user } = props;
+  const { user, showExpenseDialog } = props;
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -39,6 +40,9 @@ function Header(props) {
           <Typography variant="h6" className={classes.title}>
             Expensly
           </Typography>
+          <Button color="inherit" onClick={e => showExpenseDialog(null)}>
+            Add Expense
+          </Button>
           {user && <LogoutButton />}
         </Toolbar>
       </AppBar>
