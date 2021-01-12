@@ -12,7 +12,6 @@ function LogoutButton() {
   return (
     auth.currentUser && (
       <IconButton
-        edge="start"
         color="inherit"
         aria-label="logout"
         onClick={() => auth.signOut()}

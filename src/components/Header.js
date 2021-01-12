@@ -7,6 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
+import AddIcon from '@material-ui/icons/Add';
 import MenuIcon from '@material-ui/icons/Menu';
 
 import LogoutButton from './LogoutButton';
@@ -41,9 +42,13 @@ function Header(props) {
           <Typography variant="h6" className={classes.title}>
             Expensly
           </Typography>
-          <Button color="inherit" onClick={e => showExpenseDialog(null)}>
-            Add Expense
-          </Button>
+          <IconButton
+            color="inherit"
+            aria-label="add"
+            onClick={e => showExpenseDialog(null)}
+          >
+            <AddIcon />
+          </IconButton>
           {user && <LogoutButton />}
         </Toolbar>
       </AppBar>

@@ -13,6 +13,8 @@ export const parseAmount = amountString => numeral(amountString).value();
 export const formatDateTime = date =>
   moment(makeDate(date)).format('DD.MM.YYYY HH:mm');
 
+export const formatDate = date => moment(makeDate(date)).format('DD.MM.YYYY');
+
 export const makeDate = date =>
   moment.isMoment(date) || date instanceof firebase.firestore.Timestamp
     ? date.toDate()

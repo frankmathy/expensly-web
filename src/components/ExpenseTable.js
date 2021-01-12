@@ -7,6 +7,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Hidden from '@material-ui/core/Hidden';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ExpenseTableRow from './ExpenseTableRow';
@@ -28,7 +29,9 @@ function ExpenseTable(props) {
             <TableCell align="right">Amount</TableCell>
             <TableCell align="left">Category</TableCell>
             <TableCell align="left">Budget</TableCell>
-            <TableCell align="left">Description</TableCell>
+            <Hidden xsDown>
+              <TableCell align="left">Description</TableCell>
+            </Hidden>
           </TableRow>
         </TableHead>
         <TableBody>
