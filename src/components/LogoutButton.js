@@ -1,6 +1,7 @@
 import React from 'react';
 
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -10,9 +11,14 @@ function LogoutButton() {
 
   return (
     auth.currentUser && (
-      <Button color="inherit" onClick={() => auth.signOut()}>
-        Sign Out
-      </Button>
+      <IconButton
+        edge="start"
+        color="inherit"
+        aria-label="logout"
+        onClick={() => auth.signOut()}
+      >
+        <ExitToAppIcon />
+      </IconButton>
     )
   );
 }

@@ -15,9 +15,7 @@ function ExpenseTable(props) {
   const { expenses, showExpenseDialog } = props;
 
   const useStyles = makeStyles({
-    table: {
-      minWidth: 650
-    }
+    table: {}
   });
 
   const classes = useStyles();

@@ -8,6 +8,8 @@ import 'firebase/auth';
 
 import { useAuthState } from 'react-firebase-hooks/auth';
 
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
@@ -29,7 +31,21 @@ function App() {
         {user ? (
           <ExpensesApp user={user} firestore={firestore} />
         ) : (
-          <LoginButton />
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: '100vh' }}
+          >
+            <Typography variant="h4" gutterBottom>
+              Expensly
+            </Typography>{' '}
+            <Grid item xs={12} m={3}>
+              <LoginButton />
+            </Grid>
+          </Grid>
         )}
       </Container>
     </MuiPickersUtilsProvider>
